@@ -642,6 +642,40 @@ textarea:focus {
 }
 
 /* ─────────────────────────────────────────
+   CAMP LOCATION / MAP
+───────────────────────────────────────── */
+.location-section {
+  /* inherits .curriculum-section layout — no extra padding needed */
+}
+
+.map-wrapper {
+  width: 100%;
+  height: 420px;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid rgba(23, 32, 51, 0.08);
+  box-shadow: 0 4px 20px rgba(23, 32, 51, 0.06);
+}
+
+.map-caption {
+  margin: 12px 0 0;
+  text-align: right;
+}
+
+.map-link {
+  color: #f28c28;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.map-link:hover {
+  color: #e07d1a;
+  text-decoration: underline;
+}
+
+/* ─────────────────────────────────────────
    MOBILE
 ───────────────────────────────────────── */
 @media (max-width: 900px) {
@@ -747,8 +781,18 @@ textarea:focus {
     padding: 12px 10px;
   }
 
-    .modal-close {
-      top: 14px;
-      right: 14px;
-    }
+  .modal-close {
+    top: 14px;
+    right: 14px;
   }
+
+  /* Map on mobile */
+  .map-wrapper {
+    height: 280px;
+    border-radius: 18px;
+  }
+
+  .map-caption {
+    text-align: center;
+  }
+}

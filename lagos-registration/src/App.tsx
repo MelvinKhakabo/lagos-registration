@@ -110,30 +110,21 @@ const specialtyClasses: SpecialtyClass[] = [
 const hardSkills = [
   {
     icon: "📐",
-    title: "Math Hackathon",
-    descriptionJsx: (
-      <>
-        Not your typical math! <em>Example themes</em>: There is a flood in your city! As the mayor, how do you use math concepts to optimally distribute emergency supplies to your people?
-      </>
-    ),
+    title: "Mathematics",
+    description:
+      "Sharpen logical thinking and problem-solving through engaging, hands-on math sessions that go beyond the classroom curriculum.",
   },
   {
     icon: "🔬",
     title: "Fun Sciences",
-    descriptionJsx: (
-      <>
-        Discover the wonder of the natural world through experiments, investigations, and curiosity-driven exploration of biology, chemistry, and physics.
-      </>
-    ),
+    description:
+      "Discover the wonder of the natural world through experiments, investigations, and curiosity-driven exploration of biology, chemistry, and physics.",
   },
   {
     icon: "💻",
-    title: "Artificial Intelligence Hackathon",
-    descriptionJsx: (
-      <>
-        Who says kids are too young to solve big world problems? <em>Example themes</em>: How can AI help doctors in rural areas diagnose diseases faster? Every week's class culminates in an actual AI hackathon challenge.
-      </>
-    ),
+    title: "AI / Coding",
+    description:
+      "Build real projects and understand how artificial intelligence works — from block coding to Python basics — in a way that's exciting and accessible.",
   },
 ];
 
@@ -141,29 +132,20 @@ const softSkills = [
   {
     icon: "🎤",
     title: "Public Speaking Lab",
-    descriptionJsx: (
-      <>
-        <strong>Taught by:</strong> Ms. Helena — CEO &amp; Founder of Learning Sprouts, Harvard University graduate, and 4x TEDx/TEDxYouth coach.
-      </>
-    ),
+    description:
+      "Develop confidence, clarity, and stage presence. Students learn to craft compelling arguments and deliver them with impact.",
   },
   {
     icon: "🎵",
     title: "K-pop Songwriting",
-    descriptionJsx: (
-      <>
-        <strong>Taught by:</strong> Shorelle — internationally recognized songwriter whose credits include BTS, TWICE, ITZY, LE SSERAFIM, and the Winter Olympics.
-      </>
-    ),
+    description:
+      "Explore melody, lyric writing, and storytelling through the global lens of K-pop — a creative class that blends music theory with self-expression.",
   },
   {
     icon: "🎧",
-    title: "Afrobeats Music Production",
-    descriptionJsx: (
-      <>
-        <strong>Taught by:</strong> Pascal Bill — music arranger/director behind projects for Grammy-winning band, Sauti Sol and Kenya's national celebrations. Students will create Burna Boy-style tracks from scratch.
-      </>
-    ),
+    title: "Music Production (Afrobeats)",
+    description:
+      "Learn beat-making, sound design, and music arrangement rooted in the vibrant sounds of Afrobeats — no prior experience needed.",
   },
 ];
 
@@ -419,13 +401,14 @@ function App() {
             Future Skills.<br />Real&nbsp;Growth.
           </h1>
           <p className="hero-sub">
-            Learning Sprouts is a Kenya-based future skills training provider founded by <strong>Harvard University</strong> graduates. We offer research-driven programs that help students build academic excellence, creativity, leadership, and real-world problem-solving skills.
+            Learning Sprouts is a Kenya-based future skills training provider founded by Harvard University graduates.
+            We deliver research-driven programs that help students build academic excellence,
+            leadership, creativity, and real-world problem-solving skills.
           </p>
           <p className="hero-sub">
-            As part of our expansion into West Africa, we are launching our <strong>first pilot summer program in Lagos</strong> — with in-person programs in Mathematics, Science, and AI/Coding, alongside online specialty classes in Public Speaking, K-pop Songwriting, and Afrobeats Music Production open to students worldwide.
-          </p>
-          <p className="hero-sub">
-            Learning Sprouts is also partnering with <strong>Princeton University</strong> Mathematics Club to bring <strong>Africa's first Princeton University Mathematics Competition</strong>, giving students access to a globally recognized problem-solving platform.
+            As part of our expansion into West Africa, we are launching our first pilot summer
+            program in Lagos — with in-person programs in Mathematics, Science, and AI/Coding,
+            plus online specialty classes in public speaking, songwriting, and music production.
           </p>
           <div className="hero-cta">
             <a href="#register" className="hero-cta-btn">Register Here</a>
@@ -438,22 +421,22 @@ function App() {
         <div className="section-label">What you'll learn</div>
         <h2 className="section-title">Explore our Learning Paths</h2>
         <p className="section-sub">
-          Sign Up 1 Week At a Time. Online Classes Open to Students Worldwide.
+          A summer of creativity, confidence, and discovery — through an in-person camp in Lagos
+          and online specialty classes in communication, music, and creativity.
         </p>
 
         <div className="skills-block">
           <div className="skills-group">
             <div className="skills-group-header">
               <span className="skills-badge hard">Hard Skills</span>
-              {/* ── CHANGE 1: replaced "Lagos" with the school name ── */}
-              <span className="skills-meta">In-person · Italian International School, Lekki Phase 1 · July 6 – Aug 14</span>
+              <span className="skills-meta">In-person · Lagos · July 6 – Aug 14</span>
             </div>
             <div className="skills-grid">
               {hardSkills.map((s) => (
                 <div className="skill-card" key={s.title}>
                   <span className="skill-icon">{s.icon}</span>
-                  <h3 className="skill-title"><strong>{s.title}</strong></h3>
-                  <p className="skill-desc">{s.descriptionJsx}</p>
+                  <h3 className="skill-title">{s.title}</h3>
+                  <p className="skill-desc">{s.description}</p>
                 </div>
               ))}
             </div>
@@ -468,8 +451,8 @@ function App() {
               {softSkills.map((s) => (
                 <div className="skill-card" key={s.title}>
                   <span className="skill-icon">{s.icon}</span>
-                  <h3 className="skill-title"><strong>{s.title}</strong></h3>
-                  <p className="skill-desc">{s.descriptionJsx}</p>
+                  <h3 className="skill-title">{s.title}</h3>
+                  <p className="skill-desc">{s.description}</p>
                 </div>
               ))}
             </div>
@@ -488,8 +471,7 @@ function App() {
 
         <div className="program-selection">
           <article className="program-card">
-            {/* ── CHANGE 2: replaced "In-person · Lagos" with the school name ── */}
-            <span className="tag">In-person · Italian International School, Lekki Phase 1</span>
+            <span className="tag">In-person · Lagos</span>
             <h2>Summer Camp</h2>
             <p>
               A 6-week in-person experience with Math, AI/Coding, and Fun Sciences.
@@ -538,36 +520,6 @@ function App() {
             </button>
           </article>
         </div>
-      </section>
-
-      {/* ── CHANGE 3: CAMP LOCATION SECTION ── */}
-      <section className="curriculum-section location-section">
-        <div className="section-label">Camp Location</div>
-        <h2 className="section-title">Where We Meet</h2>
-        <p className="section-sub">
-          The summer camp takes place at the <strong>Italian International School "E. Mattei"</strong> — Sikiru Alade Oloko Crescent, Lekki Phase 1, Lagos.
-        </p>
-        <div className="map-wrapper">
-          <iframe
-            title="Camp Location – Italian International School, Lekki Phase 1"
-            width="100%"
-            height="100%"
-            style={{ border: 0, display: "block" }}
-            loading="lazy"
-            allowFullScreen
-            src="https://www.openstreetmap.org/export/embed.html?bbox=3.4607%2C6.4430%2C3.4709%2C6.4470&layer=mapnik&marker=6.4450%2C3.4658"
-          />
-        </div>
-        <p className="map-caption">
-          <a
-            href="https://www.openstreetmap.org/?mlat=6.4450&mlon=3.4658#map=17/6.4450/3.4658"
-            target="_blank"
-            rel="noreferrer"
-            className="map-link"
-          >
-            View larger map ↗
-          </a>
-        </p>
       </section>
 
       {/* ── MODAL ── */}
@@ -745,3 +697,4 @@ function App() {
 }
 
 export default App;
+
