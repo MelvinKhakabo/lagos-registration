@@ -1,7 +1,7 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import "./index.css";
 import { supabase } from "./lib/supabase";
-import { FiGlobe, FiMail } from "react-icons/fi";
+import { FiGlobe, FiMail, FiMenu, FiX } from "react-icons/fi";
 import { FaInstagram } from "react-icons/fa";
 
 declare global {
@@ -183,6 +183,14 @@ function App() {
   const [selectedSpecialtyOption, setSelectedSpecialtyOption] = useState("");
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const selectedClass = specialtyClasses.find((item) => item.id === selectedSpecialtyClass);
   const selectedSpecialtyOptionData = selectedClass?.options.find(
@@ -200,7 +208,6 @@ function App() {
     }
     return selectedSpecialtyClass && selectedSpecialtyOption ? SPECIALTY_PRICE_USD : 0;
   }, [programType, selectedWeeks, selectedSpecialtyClass, selectedSpecialtyOption, childCount]);
-
 
   function updateField<K extends keyof FormData>(key: K, value: FormData[K]) {
     setFormData((current) => ({ ...current, [key]: value }));
@@ -409,10 +416,75 @@ function App() {
     });
   }
 
+  function handleNavClick(e: React.MouseEvent<HTMLAnchorElement>, id: string) {
+    e.preventDefault();
+    setMobileMenuOpen(false);
+    const el = document.getElementById(id);
+    if (el) {
+      const offset = 72;
+      const top = el.getBoundingClientRect().top + window.scrollY - offset;
+      window.scrollTo({ top, behavior: "smooth" });
+    }
+  }
+
   return (
     <main className="page">
+
+      {/* ── STICKY NAV ── */}
+      <header className={`site-nav${scrolled ? " site-nav--scrolled" : ""}`}>
+        <div className="nav-inner">
+          <a
+            href="#hero"
+            className="nav-brand"
+            onClick={(e) => handleNavClick(e, "hero")}
+          >
+            Learning Sprouts Lagos
+          </a>
+
+          {/* Desktop links */}
+          <nav className="nav-links">
+            <a href="#curriculum" onClick={(e) => handleNavClick(e, "curriculum")}>Programs</a>
+            <a href="#location" onClick={(e) => handleNavClick(e, "location")}>Location</a>
+            <a href="#register" onClick={(e) => handleNavClick(e, "register")}>Register</a>
+            <a
+              href="#register"
+              className="nav-cta"
+              onClick={(e) => { handleNavClick(e, "register"); }}
+            >
+              Enroll Now
+            </a>
+          </nav>
+
+          {/* Mobile hamburger */}
+          <button
+            type="button"
+            className="nav-hamburger"
+            aria-label="Toggle menu"
+            onClick={() => setMobileMenuOpen((v) => !v)}
+          >
+            {mobileMenuOpen ? <FiX size={22} /> : <FiMenu size={22} />}
+          </button>
+        </div>
+
+        {/* Mobile dropdown */}
+        {mobileMenuOpen && (
+          <div className="nav-mobile-menu">
+            <a href="#curriculum" onClick={(e) => handleNavClick(e, "curriculum")}>Programs</a>
+            <a href="#location" onClick={(e) => handleNavClick(e, "location")}>Location</a>
+            <a href="#register" onClick={(e) => handleNavClick(e, "register")}>Register</a>
+            <a
+              href="#register"
+              className="nav-cta nav-cta--mobile"
+              onClick={(e) => { handleNavClick(e, "register"); }}
+            >
+              Enroll Now
+            </a>
+          </div>
+        )}
+      </header>
+
       {/* ── HERO ── */}
-      <section className="hero">
+      <section className="hero" id="hero">
         <p className="eyebrow">Learning Sprouts Lagos</p>
         <div className="hero-body">
           <h1 className="hero-headline">
@@ -428,24 +500,24 @@ function App() {
             Learning Sprouts is also partnering with <strong>Princeton University</strong> Mathematics Club to bring <strong>Africa's first Princeton University Mathematics Competition</strong>, giving students access to a globally recognized problem-solving platform.
           </p>
           <div className="hero-cta">
-            <a href="#register" className="hero-cta-btn">Register Here</a>
+            <a href="#register" className="hero-cta-btn" onClick={(e) => handleNavClick(e, "register")}>Register Here</a>
           </div>
         </div>
       </section>
 
       {/* ── CURRICULUM ── */}
-      <section className="curriculum-section">
+      <section className="curriculum-section" id="curriculum">
         <div className="section-label">What you'll learn</div>
         <h2 className="section-title">Explore our Learning Paths</h2>
+        {/* CHANGE 1a: Added ages before the subtitle */}
         <p className="section-sub">
-          Sign Up 1 Week At a Time. Online Classes Open to Students Worldwide.
+          For ages 8–12 and ages 13–16. Sign Up 1 Week At a Time. Online Classes Open to Students Worldwide.
         </p>
 
         <div className="skills-block">
           <div className="skills-group">
             <div className="skills-group-header">
               <span className="skills-badge hard">Hard Skills</span>
-              {/* ── CHANGE 1: replaced "Lagos" with the school name ── */}
               <span className="skills-meta">In-person · Italian International School, Lekki Phase 1 · July 6 – Aug 14</span>
             </div>
             <div className="skills-grid">
@@ -477,71 +549,8 @@ function App() {
         </div>
       </section>
 
-      {/* ── REGISTRATION ── */}
-      <section className="register-section" id="register">
-        <div className="section-label">Enroll now</div>
-        <h2 className="section-title">Register for the Program of Your Choice</h2>
-        <p className="section-sub">
-          Select the program that fits your child's interests. You can register for the
-          Summer Camp, Specialty Classes, or both.
-        </p>
-
-        <div className="program-selection">
-          <article className="program-card">
-            {/* ── CHANGE 2: replaced "In-person · Lagos" with the school name ── */}
-            <span className="tag">In-person · Italian International School, Lekki Phase 1</span>
-            <h2>Summer Camp</h2>
-            <p>
-              A 6-week in-person experience with Math, AI/Coding, and Fun Sciences.
-              Register weekly or choose multiple weeks in one payment.
-            </p>
-            <div className="detail-grid">
-              <div className="detail-row">
-                <span>July 6 – Aug 14</span>
-                <span className="detail-sep">/</span>
-                <span>$100 per week</span>
-              </div>
-              <div className="detail-row">
-                <span>Math</span>
-                <span className="detail-sep">·</span>
-                <span>Fun Sciences</span>
-                <span className="detail-sep">·</span>
-                <span>AI/Coding</span>
-              </div>
-            </div>
-            <button type="button" className="primary-button card-button" onClick={() => openRegistration("summer-camp")}>
-              Register for Summer Camp
-            </button>
-          </article>
-
-          <article className="program-card program-card--alt">
-            <span className="tag">Online</span>
-            <h2>Specialty Classes</h2>
-            <p>
-              Focused online classes for students interested in public speaking,
-              songwriting, and Afrobeats music production.
-            </p>
-            <div className="detail-grid">
-              <div className="detail-row">
-                <span>$90 per specialty class</span>
-              </div>
-              <div className="detail-row">
-                <span>Public Speaking Lab</span>
-                <span className="detail-sep">·</span>
-                <span>K-pop Songwriting</span>
-                <span className="detail-sep">·</span>
-                <span>Music Production</span>
-              </div>
-            </div>
-            <button type="button" className="primary-button card-button" onClick={() => openRegistration("specialty-classes")}>
-              Register for Specialty Classes
-            </button>
-          </article>
-        </div>
-      </section>
-
-      {/* ── CHANGE 3: CAMP LOCATION SECTION ── */}
-      <section className="curriculum-section location-section">
+      {/* ── CAMP LOCATION — moved above register ── */}
+      <section className="curriculum-section location-section" id="location">
         <div className="section-label">Camp Location</div>
         <h2 className="section-title">Where We Meet</h2>
         <p className="section-sub">
@@ -568,6 +577,70 @@ function App() {
             View larger map ↗
           </a>
         </p>
+      </section>
+
+      {/* ── REGISTRATION ── */}
+      <section className="register-section" id="register">
+        <div className="section-label">Enroll now</div>
+        <h2 className="section-title">Register for the Program of Your Choice</h2>
+        {/* CHANGE 1b: Added ages before the subtitle */}
+        <p className="section-sub">
+          For ages 8–12 and ages 13–16. Select the program that fits your child's interests. You can register for the Summer Camp, Specialty Classes, or both.
+        </p>
+
+        <div className="program-selection">
+          <article className="program-card">
+            <span className="tag">In-person · Italian International School, Lekki Phase 1</span>
+            <h2>Summer Camp</h2>
+            <p className="program-age-label">(Ages 8–12 &amp; 13–16)</p>
+            <p>
+              A 6-week in-person experience with Math, AI/Coding, and Fun Sciences.
+              Register weekly or choose multiple weeks in one payment.
+            </p>
+            <div className="detail-grid">
+              <div className="detail-row">
+                <span>July 6 – Aug 14</span>
+                <span className="detail-sep">/</span>
+                <span>$100 per week</span>
+              </div>
+              <div className="detail-row">
+                <span>Math</span>
+                <span className="detail-sep">·</span>
+                <span>Fun Sciences</span>
+                <span className="detail-sep">·</span>
+                <span>AI/Coding</span>
+              </div>
+            </div>
+            <button type="button" className="primary-button card-button" onClick={() => openRegistration("summer-camp")}>
+              Register for Summer Camp
+            </button>
+          </article>
+
+          <article className="program-card program-card--alt">
+            <span className="tag">Online</span>
+            <h2>Specialty Classes</h2>
+            <p className="program-age-label">(Ages 8–12 &amp; 13–16)</p>
+            <p>
+              Focused online classes for students interested in public speaking,
+              songwriting, and Afrobeats music production.
+            </p>
+            <div className="detail-grid">
+              <div className="detail-row">
+                <span>$90 per specialty class</span>
+              </div>
+              <div className="detail-row">
+                <span>Public Speaking Lab</span>
+                <span className="detail-sep">·</span>
+                <span>K-pop Songwriting</span>
+                <span className="detail-sep">·</span>
+                <span>Music Production</span>
+              </div>
+            </div>
+            <button type="button" className="primary-button card-button" onClick={() => openRegistration("specialty-classes")}>
+              Register for Specialty Classes
+            </button>
+          </article>
+        </div>
       </section>
 
       {/* ── MODAL ── */}
