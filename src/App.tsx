@@ -250,7 +250,7 @@ function App() {
       nextErrors.preferredContactMethod = "Choose a preferred contact method.";
 
     if (programType === "summer-camp" && selectedWeeks.length === 0)
-      nextErrors.selectedWeeks = "Select at least one Summer Camp week.";
+      nextErrors.selectedWeeks = "Select at least one Holiday Camp week.";
 
     if (programType === "summer-camp" && formData.hasSiblings) {
       if (!formData.siblingCount.trim())
@@ -494,7 +494,7 @@ function App() {
             Learning Sprouts is a Kenya-based future skills training provider founded by <strong>Harvard University</strong> graduates. We offer research-driven programs that help students build academic excellence, creativity, leadership, and real-world problem-solving skills.
           </p>
           <p className="hero-sub">
-            As part of our expansion into West Africa, we are launching our <strong>first pilot summer program in Lagos</strong> — with in-person programs in Mathematics, Science, and AI/Coding, alongside online specialty classes in Public Speaking, K-pop Songwriting, and Afrobeats Music Production open to students worldwide.
+            As part of our expansion into West Africa, we are launching our <strong>first pilot holiday program in Lagos</strong> — with in-person programs in Mathematics, Science, and AI/Coding, alongside online specialty classes in Public Speaking, K-pop Songwriting, and Afrobeats Music Production open to students worldwide.
           </p>
           <p className="hero-sub">
             Learning Sprouts is also partnering with <strong>Princeton University</strong> Mathematics Club to bring <strong>Africa's first Princeton University Mathematics Competition</strong>, giving students access to a globally recognized problem-solving platform.
@@ -509,7 +509,6 @@ function App() {
       <section className="curriculum-section" id="curriculum">
         <div className="section-label">What you'll learn</div>
         <h2 className="section-title">Explore our Learning Paths</h2>
-        {/* CHANGE 1a: Added ages before the subtitle */}
         <p className="section-sub">
           For ages 8–12 and ages 13–16. Sign Up 1 Week At a Time. Online Classes Open to Students Worldwide.
         </p>
@@ -534,7 +533,7 @@ function App() {
           <div className="skills-group">
             <div className="skills-group-header">
               <span className="skills-badge soft">Soft Skills</span>
-              <span className="skills-meta">Online · Flexible schedule</span>
+              <span className="skills-meta">Online · Register below to Confirm Schedule</span>
             </div>
             <div className="skills-grid">
               {softSkills.map((s) => (
@@ -549,12 +548,12 @@ function App() {
         </div>
       </section>
 
-      {/* ── CAMP LOCATION — moved above register ── */}
+      {/* ── CAMP LOCATION ── */}
       <section className="curriculum-section location-section" id="location">
         <div className="section-label">Camp Location</div>
         <h2 className="section-title">Where We Meet</h2>
         <p className="section-sub">
-          The summer camp takes place at the <strong>Italian International School "E. Mattei"</strong> — Sikiru Alade Oloko Crescent, Lekki Phase 1, Lagos.
+          The holiday camp takes place at the <strong>Italian International School "E. Mattei"</strong> — Sikiru Alade Oloko Crescent, Lekki Phase 1, Lagos.
         </p>
         <div className="map-wrapper">
           <iframe
@@ -583,15 +582,14 @@ function App() {
       <section className="register-section" id="register">
         <div className="section-label">Enroll now</div>
         <h2 className="section-title">Register for the Program of Your Choice</h2>
-        {/* CHANGE 1b: Added ages before the subtitle */}
         <p className="section-sub">
-          For ages 8–12 and ages 13–16. Select the program that fits your child's interests. You can register for the Summer Camp, Specialty Classes, or both.
+          For ages 8–12 and ages 13–16. Select the program that fits your child's interests. You can register for the Holiday Camp, Specialty Classes, or both.
         </p>
 
         <div className="program-selection">
           <article className="program-card">
             <span className="tag">In-person · Italian International School, Lekki Phase 1</span>
-            <h2>Summer Camp</h2>
+            <h2>Holiday Camp</h2>
             <p className="program-age-label">(Ages 8–12 &amp; 13–16)</p>
             <p>
               A 6-week in-person experience with Math, AI/Coding, and Fun Sciences.
@@ -612,7 +610,7 @@ function App() {
               </div>
             </div>
             <button type="button" className="primary-button card-button" onClick={() => openRegistration("summer-camp")}>
-              Register for Summer Camp
+              Register for Holiday Camp
             </button>
           </article>
 
@@ -651,7 +649,7 @@ function App() {
               <button type="button" className="modal-close" onClick={() => setIsRegistrationOpen(false)}>×</button>
 
               <p className="eyebrow">Registration</p>
-              <h2>{programType === "summer-camp" ? "Register for Summer Camp" : "Register for Specialty Classes"}</h2>
+              <h2>{programType === "summer-camp" ? "Register for Holiday Camp" : "Register for Specialty Classes"}</h2>
 
               <div className="form-grid">
                 <label>
@@ -704,7 +702,7 @@ function App() {
 
               {programType === "summer-camp" && (
                 <div className="form-section">
-                  <h3>Select Summer Camp weeks</h3>
+                  <h3>Select Holiday Camp weeks</h3>
                   {errors.selectedWeeks && <p className="error-text">{errors.selectedWeeks}</p>}
                   <div className="week-grid">
                     {summerWeeks.map((week) => (
