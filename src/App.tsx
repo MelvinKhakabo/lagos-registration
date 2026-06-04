@@ -42,11 +42,19 @@ type SpecialtyClass = {
   name: string;
   ageLabel: string;
   priceUsd: number;
+  fullyBooked?: boolean;
   options: {
     id: string;
     label: string;
     time: string;
   }[];
+};
+
+type SoftSkill = {
+  icon: string;
+  title: string;
+  fullyBooked?: boolean;
+  descriptionJsx: React.ReactNode;
 };
 
 const SUMMER_WEEK_PRICE_USD = 100;
@@ -75,17 +83,8 @@ const summerWeeks = [
   { id: "week-6", label: "Week 6", dates: "August 10 – August 14", priceUsd: 100 },
 ];
 
+// Public Speaking Lab last, marked fullyBooked
 const specialtyClasses: SpecialtyClass[] = [
-  {
-    id: "public-speaking-lab",
-    name: "Public Speaking Lab",
-    ageLabel: "Ages 12–18",
-    priceUsd: 90,
-    options: [
-      { id: "public-speaking-12-14", label: "Ages 12–14", time: "1:00 PM – 2:30 PM WAT" },
-      { id: "public-speaking-15-18", label: "Ages 15–18", time: "3:00 PM – 4:30 PM WAT" },
-    ],
-  },
   {
     id: "kpop-songwriting",
     name: "K-pop Songwriting",
@@ -103,6 +102,17 @@ const specialtyClasses: SpecialtyClass[] = [
     priceUsd: 90,
     options: [
       { id: "afrobeats-july-27", label: "Week of July 27", time: "9:00 AM – 10:30 AM WAT" },
+    ],
+  },
+  {
+    id: "public-speaking-lab",
+    name: "Public Speaking Lab",
+    ageLabel: "Ages 12–18",
+    priceUsd: 90,
+    fullyBooked: true,
+    options: [
+      { id: "public-speaking-12-14", label: "Ages 12–14", time: "1:00 PM – 2:30 PM WAT" },
+      { id: "public-speaking-15-18", label: "Ages 15–18", time: "3:00 PM – 4:30 PM WAT" },
     ],
   },
 ];
@@ -137,10 +147,12 @@ const hardSkills = [
   },
 ];
 
-const softSkills = [
+// Public Speaking Lab marked fullyBooked so the card shows the badge
+const softSkills: SoftSkill[] = [
   {
     icon: "🎤",
     title: "Public Speaking Lab",
+    fullyBooked: true,
     descriptionJsx: (
       <>
         <strong>Taught by:</strong> Ms. Helena — CEO &amp; Founder of Learning Sprouts, Harvard University graduate, and 4x TEDx/TEDxYouth coach.
@@ -517,7 +529,7 @@ function App() {
           <div className="skills-group">
             <div className="skills-group-header">
               <span className="skills-badge hard">Hard Skills</span>
-              <span className="skills-meta">In-person · Italian International School, Lekki Phase 1 · July 6 – Aug 14</span>
+              <span className="skills-meta">In-person · Italian International School, Lekki Phase 1 · July 8 – Aug 14</span>
             </div>
             <div className="skills-grid">
               {hardSkills.map((s) => (
@@ -537,9 +549,14 @@ function App() {
             </div>
             <div className="skills-grid">
               {softSkills.map((s) => (
-                <div className="skill-card" key={s.title}>
+                <div className={`skill-card${s.fullyBooked ? " skill-card--booked" : ""}`} key={s.title}>
                   <span className="skill-icon">{s.icon}</span>
-                  <h3 className="skill-title"><strong>{s.title}</strong></h3>
+                  <h3 className="skill-title">
+                    <strong>{s.title}</strong>
+                    {s.fullyBooked && (
+                      <span className="fully-booked-badge skill-booked-badge">Fully Booked</span>
+                    )}
+                  </h3>
                   <p className="skill-desc">{s.descriptionJsx}</p>
                 </div>
               ))}
@@ -614,6 +631,7 @@ function App() {
             </button>
           </article>
 
+          {/* ── SPECIALTY CLASSES CARD ── */}
           <article className="program-card program-card--alt">
             <span className="tag">Online</span>
             <h2>Specialty Classes</h2>
@@ -627,11 +645,15 @@ function App() {
                 <span>$90 per specialty class</span>
               </div>
               <div className="detail-row">
-                <span>Public Speaking Lab</span>
-                <span className="detail-sep">·</span>
                 <span>K-pop Songwriting</span>
                 <span className="detail-sep">·</span>
                 <span>Music Production</span>
+              </div>
+              {/* Public Speaking Lab combined with Fully Booked in one pill */}
+              <div className="detail-row">
+                <span className="detail-pill-booked">
+                  Public Speaking Lab <em>· Fully Booked</em>
+                </span>
               </div>
             </div>
             <button type="button" className="primary-button card-button" onClick={() => openRegistration("specialty-classes")}>
@@ -744,18 +766,42 @@ function App() {
                   {errors.selectedSpecialtyClass && <p className="error-text">{errors.selectedSpecialtyClass}</p>}
                   <div className="specialty-list">
                     {specialtyClasses.map((item) => (
-                      <button
+                      <div
                         key={item.id}
-                        type="button"
-                        className={`specialty-card ${selectedSpecialtyClass === item.id ? "selected" : ""}`}
-                        onClick={() => { setSelectedSpecialtyClass(item.id); setSelectedSpecialtyOption(""); }}
+                        className={`specialty-card${item.fullyBooked ? " specialty-card--booked" : ""}${selectedSpecialtyClass === item.id ? " selected" : ""}`}
+                        onClick={() => {
+                          if (!item.fullyBooked) {
+                            setSelectedSpecialtyClass(item.id);
+                            setSelectedSpecialtyOption("");
+                            setErrors((c) => ({ ...c, selectedSpecialtyClass: "" }));
+                          }
+                        }}
+                        style={{ cursor: item.fullyBooked ? "not-allowed" : "pointer" }}
                       >
-                        <strong>{item.name}</strong>
+                        <div className="specialty-card-header">
+                          <strong>{item.name}</strong>
+                          {item.fullyBooked && (
+                            <span className="fully-booked-badge">Fully Booked</span>
+                          )}
+                        </div>
                         <div className="week-meta">
                           <span>{item.ageLabel}</span>
-                          <small>{formatCurrency(item.priceUsd, "USD")}</small>
+                          {!item.fullyBooked && (
+                            <small>{formatCurrency(item.priceUsd, "USD")}</small>
+                          )}
                         </div>
-                      </button>
+                        {item.fullyBooked && (
+                          <p className="fully-booked-notice">
+                            Make enquiries for our next intake at{" "}
+                            <a
+                              href="mailto:ask@learningsprouts.school"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              ask@learningsprouts.school
+                            </a>
+                          </p>
+                        )}
+                      </div>
                     ))}
                   </div>
 

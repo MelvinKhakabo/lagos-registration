@@ -32,7 +32,6 @@ textarea {
 .page {
   min-height: 100vh;
   padding: 0 0 80px;
-  /* Push content below the fixed nav */
   padding-top: 68px;
 }
 
@@ -391,6 +390,8 @@ p {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 20px;
+  /* Equal height cards in each row */
+  align-items: stretch;
 }
 
 .skill-card {
@@ -400,11 +401,25 @@ p {
   padding: 28px 24px;
   box-shadow: 0 4px 20px rgba(23, 32, 51, 0.04);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
 }
 
 .skill-card:hover {
   transform: translateY(-3px);
   box-shadow: 0 12px 32px rgba(23, 32, 51, 0.09);
+}
+
+/* Fully booked skill card — subtle greyed state */
+.skill-card--booked {
+  opacity: 0.72;
+  background: #f9f9f9;
+  border-color: rgba(23, 32, 51, 0.06);
+}
+
+.skill-card--booked:hover {
+  transform: none;
+  box-shadow: 0 4px 20px rgba(23, 32, 51, 0.04);
 }
 
 .skill-icon {
@@ -418,6 +433,10 @@ p {
   font-weight: 800;
   letter-spacing: -0.02em;
   margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .skill-desc {
@@ -442,6 +461,7 @@ p {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 24px;
+  align-items: stretch;
 }
 
 .program-card {
@@ -452,7 +472,6 @@ p {
   box-shadow: 0 12px 40px rgba(23, 32, 51, 0.06);
   display: flex;
   flex-direction: column;
-  min-height: 380px;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -481,7 +500,6 @@ p {
   text-align: justify;
 }
 
-/* Age label below program card headings */
 .program-age-label {
   display: inline-block;
   font-size: 0.82rem;
@@ -539,6 +557,26 @@ p {
   font-size: 0.9rem !important;
 }
 
+/* Single pill that combines "Public Speaking Lab · Fully Booked" */
+.detail-pill-booked {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(23, 32, 51, 0.08);
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: #172033;
+}
+
+.detail-pill-booked em {
+  font-style: normal;
+  color: #c0392b;
+  font-weight: 700;
+}
+
 .primary-button {
   display: inline-flex;
   align-items: center;
@@ -562,6 +600,78 @@ p {
 
 .card-button {
   width: fit-content;
+}
+
+/* ─────────────────────────────────────────
+   FULLY BOOKED — badge & card states
+───────────────────────────────────────── */
+
+/* Red pill badge — used in skill card titles and modal specialty card headers */
+.fully-booked-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #c0392b;
+  background: #fdecea;
+  border: 1px solid #f5c6c2;
+  border-radius: 999px;
+  padding: 3px 10px;
+  white-space: nowrap;
+  letter-spacing: 0.03em;
+}
+
+/* Extra spacing tweak when badge appears inside skill-title */
+.skill-booked-badge {
+  font-size: 0.65rem;
+  padding: 2px 9px;
+}
+
+/* Header row inside modal specialty cards */
+.specialty-card-header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+/* specialty-card-header overrides the strong display:block from week-card rule */
+.specialty-card-header strong {
+  display: inline;
+  margin-bottom: 0;
+}
+
+/* Booked card in the modal — greyed out, dashed border, no hover lift */
+.specialty-card--booked {
+  opacity: 0.72;
+  background: #f9f9f9 !important;
+  border: 1px dashed #d5d5d5 !important;
+  box-shadow: none !important;
+}
+
+.specialty-card--booked:hover {
+  border-color: #d5d5d5 !important;
+  transform: none !important;
+}
+
+/* Enquiry notice under booked modal card */
+.fully-booked-notice {
+  margin-top: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #c0392b;
+  line-height: 1.5;
+}
+
+.fully-booked-notice a {
+  color: #c0392b;
+  text-decoration: underline;
+  font-weight: 700;
+}
+
+.fully-booked-notice a:hover {
+  color: #96281b;
 }
 
 /* ─────────────────────────────────────────
@@ -852,7 +962,6 @@ textarea:focus {
     padding-top: 60px;
   }
 
-  /* Nav mobile */
   .nav-links {
     display: none;
   }
@@ -923,7 +1032,6 @@ textarea:focus {
 
   .program-card {
     padding: 22px 18px;
-    min-height: auto;
     border-radius: 22px;
   }
 
