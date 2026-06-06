@@ -306,6 +306,7 @@ function App() {
         preferred_contact_method: formData.preferredContactMethod,
         has_siblings: formData.hasSiblings,
         sibling_count: Number(formData.siblingCount || 0),
+        sibling_details: formData.siblingDetails || null,  // ← ADDED
         total_usd: totalUsd,
         paystack_amount_subunit: amountInUsdCents,
         payment_status: "paid",
@@ -418,8 +419,12 @@ function App() {
           await saveRegistrationAfterPayment(response.reference, amountInUsdCents);
           window.location.href = `/thank-you?reference=${response.reference}`;
         } catch (error) {
-          console.error(error);
-          alert("Payment succeeded but saving failed. Please contact support.");
+          console.error("Full save error:", error);
+          alert(
+            `Payment was successful (ref: ${response.reference}) but we could not save your details. ` +
+            `Please email ask@learningsprouts.school with this reference number and we will sort it out. ` +
+            `Error: ${JSON.stringify(error)}`
+          );
         }
       },
       onCancel: () => {
