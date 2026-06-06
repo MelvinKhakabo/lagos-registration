@@ -284,7 +284,8 @@ function App() {
     return Object.keys(nextErrors).length === 0;
   }
 
-  async function saveRegistrationAfterPayment(reference: string, amountInUsdCents: number) {
+  // ─── STEP 1: Save registration as "pending" BEFORE opening Paystack ───
+  async function createPendingRegistration(reference: string, amountInUsdCents: number): Promise<string> {
     const { data: programData, error: programError } = await supabase
       .from("programs")
       .select("id, slug")
@@ -306,10 +307,10 @@ function App() {
         preferred_contact_method: formData.preferredContactMethod,
         has_siblings: formData.hasSiblings,
         sibling_count: Number(formData.siblingCount || 0),
-        sibling_details: formData.siblingDetails || null,  // ← ADDED
+        sibling_details: formData.siblingDetails || null,
         total_usd: totalUsd,
         paystack_amount_subunit: amountInUsdCents,
-        payment_status: "paid",
+        payment_status: "pending",
         paystack_reference: reference,
       })
       .select()
@@ -317,6 +318,7 @@ function App() {
 
     if (regError || !registration) throw regError || new Error("Failed to create registration");
 
+    // Save week/specialty selections immediately so we don't lose them
     if (programType === "summer-camp") {
       const { data: weeksData, error: weeksError } = await supabase
         .from("summer_camp_weeks")
@@ -365,8 +367,20 @@ function App() {
       if (error) throw error;
     }
 
+    return registration.id;
+  }
+
+  // ─── STEP 2a: Update registration to "paid" AFTER successful payment ───
+  async function markRegistrationPaid(registrationId: string, reference: string, amountInUsdCents: number) {
+    const { error: updateError } = await supabase
+      .from("registrations")
+      .update({ payment_status: "paid" })
+      .eq("id", registrationId);
+
+    if (updateError) throw updateError;
+
     const { error: paymentError } = await supabase.from("payments").insert({
-      registration_id: registration.id,
+      registration_id: registrationId,
       reference,
       status: "paid",
       amount_usd: totalUsd,
@@ -377,7 +391,15 @@ function App() {
     if (paymentError) throw paymentError;
   }
 
-  function handleContinueToPayment() {
+  // ─── STEP 2b: Update registration to "cancelled" if Paystack is closed ───
+  async function markRegistrationCancelled(registrationId: string) {
+    await supabase
+      .from("registrations")
+      .update({ payment_status: "cancelled" })
+      .eq("id", registrationId);
+  }
+
+  async function handleContinueToPayment() {
     if (!validateForm()) return;
 
     if (!PAYSTACK_PUBLIC_KEY) {
@@ -393,6 +415,17 @@ function App() {
     const reference = `LS-LAGOS-${Date.now()}`;
     const amountInUsdCents = Math.round(totalUsd * 100);
     const selectedSummerWeeks = summerWeeks.filter((week) => selectedWeeks.includes(week.id));
+
+    // ── Save to DB BEFORE opening Paystack ──
+    let registrationId: string;
+    try {
+      registrationId = await createPendingRegistration(reference, amountInUsdCents);
+    } catch (error) {
+      console.error("Failed to save registration before payment:", error);
+      alert("Something went wrong saving your details. Please try again or contact ask@learningsprouts.school.");
+      return;
+    }
+
     const paystack = new window.PaystackPop();
 
     paystack.newTransaction({
@@ -416,19 +449,25 @@ function App() {
       },
       onSuccess: async (response) => {
         try {
-          await saveRegistrationAfterPayment(response.reference, amountInUsdCents);
+          await markRegistrationPaid(registrationId, response.reference, amountInUsdCents);
           window.location.href = `/thank-you?reference=${response.reference}`;
         } catch (error) {
-          console.error("Full save error:", error);
+          console.error("Failed to mark registration as paid:", error);
+          // Payment succeeded and data is already saved as pending —
+          // so we just alert support to manually update the status
           alert(
-            `Payment was successful (ref: ${response.reference}) but we could not save your details. ` +
-            `Please email ask@learningsprouts.school with this reference number and we will sort it out. ` +
-            `Error: ${JSON.stringify(error)}`
+            `Payment successful (ref: ${response.reference}) but we could not update your record. ` +
+            `Your details are saved. Please email ask@learningsprouts.school with this reference.`
           );
         }
       },
-      onCancel: () => {
-        alert("Payment window closed. You can try again when ready.");
+      onCancel: async () => {
+        try {
+          await markRegistrationCancelled(registrationId);
+        } catch (error) {
+          console.error("Failed to mark registration as cancelled:", error);
+        }
+        alert("Payment window closed. Your details have been saved — you can complete payment any time by registering again.");
       },
     });
   }
@@ -654,7 +693,6 @@ function App() {
                 <span className="detail-sep">·</span>
                 <span>Music Production</span>
               </div>
-              {/* Public Speaking Lab combined with Fully Booked in one pill */}
               <div className="detail-row">
                 <span className="detail-pill-booked">
                   Public Speaking Lab <em>· Fully Booked</em>
