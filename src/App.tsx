@@ -371,7 +371,7 @@ function App() {
   }
 
   // ─── STEP 2a: Update registration to "paid" AFTER successful payment ───
-  async function markRegistrationPaid(registrationId: string, reference: string, amountInUsdCents: number) {
+  async function markRegistrationPaid(registrationId: string, reference: string, _amountInUsdCents: number) {
     const { error: updateError } = await supabase
       .from("registrations")
       .update({ payment_status: "paid" })
