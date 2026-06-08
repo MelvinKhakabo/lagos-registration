@@ -83,6 +83,15 @@ const summerWeeks = [
   { id: "week-6", label: "Week 6", dates: "August 10 – August 14", priceUsd: 100 },
 ];
 
+const scheduleRows = [
+  { time: "9:00 – 10:00",   ages8to12: "Math",        ages13to16: "AI/Coding",    isBreak: false },
+  { time: "10:00 – 10:30",  ages8to12: "Fun Sciences", ages13to16: "AI/Coding",    isBreak: false },
+  { time: "10:30 – 11:00",  ages8to12: "Fun Sciences", ages13to16: "Break",        isBreak: false },
+  { time: "11:00 – 11:30",  ages8to12: "Break",        ages13to16: "Math",         isBreak: false },
+  { time: "11:30 – 12:00",  ages8to12: "AI/Coding",   ages13to16: "Math",         isBreak: false },
+  { time: "12:00 – 1:00",   ages8to12: "AI/Coding",   ages13to16: "Fun Sciences", isBreak: false },
+];
+
 // Public Speaking Lab last, marked fullyBooked
 const specialtyClasses: SpecialtyClass[] = [
   {
@@ -185,6 +194,10 @@ function formatCurrency(amount: number, currency: "USD" | "NGN") {
     currency,
     maximumFractionDigits: currency === "NGN" ? 0 : 2,
   }).format(amount);
+}
+
+function isBreakCell(value: string) {
+  return value.toLowerCase() === "break";
 }
 
 function App() {
@@ -318,7 +331,6 @@ function App() {
 
     if (regError || !registration) throw regError || new Error("Failed to create registration");
 
-    // Save week/specialty selections immediately so we don't lose them
     if (programType === "summer-camp") {
       const { data: weeksData, error: weeksError } = await supabase
         .from("summer_camp_weeks")
@@ -453,8 +465,6 @@ function App() {
           window.location.href = `/thank-you?reference=${response.reference}`;
         } catch (error) {
           console.error("Failed to mark registration as paid:", error);
-          // Payment succeeded and data is already saved as pending —
-          // so we just alert support to manually update the status
           alert(
             `Payment successful (ref: ${response.reference}) but we could not update your record. ` +
             `Your details are saved. Please email ask@learningsprouts.school with this reference.`
@@ -489,29 +499,18 @@ function App() {
       {/* ── STICKY NAV ── */}
       <header className={`site-nav${scrolled ? " site-nav--scrolled" : ""}`}>
         <div className="nav-inner">
-          <a
-            href="#hero"
-            className="nav-brand"
-            onClick={(e) => handleNavClick(e, "hero")}
-          >
+          <a href="#hero" className="nav-brand" onClick={(e) => handleNavClick(e, "hero")}>
             Learning Sprouts Lagos
           </a>
-
-          {/* Desktop links */}
           <nav className="nav-links">
             <a href="#curriculum" onClick={(e) => handleNavClick(e, "curriculum")}>Programs</a>
+            <a href="#schedule" onClick={(e) => handleNavClick(e, "schedule")}>Schedule</a>
             <a href="#location" onClick={(e) => handleNavClick(e, "location")}>Location</a>
             <a href="#register" onClick={(e) => handleNavClick(e, "register")}>Register</a>
-            <a
-              href="#register"
-              className="nav-cta"
-              onClick={(e) => { handleNavClick(e, "register"); }}
-            >
+            <a href="#register" className="nav-cta" onClick={(e) => { handleNavClick(e, "register"); }}>
               Enroll Now
             </a>
           </nav>
-
-          {/* Mobile hamburger */}
           <button
             type="button"
             className="nav-hamburger"
@@ -522,17 +521,13 @@ function App() {
           </button>
         </div>
 
-        {/* Mobile dropdown */}
         {mobileMenuOpen && (
           <div className="nav-mobile-menu">
             <a href="#curriculum" onClick={(e) => handleNavClick(e, "curriculum")}>Programs</a>
+            <a href="#schedule" onClick={(e) => handleNavClick(e, "schedule")}>Schedule</a>
             <a href="#location" onClick={(e) => handleNavClick(e, "location")}>Location</a>
             <a href="#register" onClick={(e) => handleNavClick(e, "register")}>Register</a>
-            <a
-              href="#register"
-              className="nav-cta nav-cta--mobile"
-              onClick={(e) => { handleNavClick(e, "register"); }}
-            >
+            <a href="#register" className="nav-cta nav-cta--mobile" onClick={(e) => { handleNavClick(e, "register"); }}>
               Enroll Now
             </a>
           </div>
@@ -609,6 +604,40 @@ function App() {
         </div>
       </section>
 
+      {/* ── DAILY SCHEDULE ── */}
+      <section className="curriculum-section schedule-section" id="schedule">
+        <div className="section-label">Daily Schedule</div>
+        <h2 className="section-title">A Typical Camp Day</h2>
+        <p className="section-sub">
+          Monday to Friday · Italian International School, Lekki Phase 1 · July 6 – August 14
+        </p>
+
+        <div className="schedule-table-wrapper">
+          <table className="schedule-table">
+            <thead>
+              <tr>
+                <th className="schedule-th schedule-th--time">Time</th>
+                <th className="schedule-th">Ages 8–12</th>
+                <th className="schedule-th">Ages 13–16</th>
+              </tr>
+            </thead>
+            <tbody>
+              {scheduleRows.map((row, index) => (
+                <tr key={index} className="schedule-row">
+                  <td className="schedule-td schedule-td--time">{row.time}</td>
+                  <td className={`schedule-td${isBreakCell(row.ages8to12) ? " schedule-td--break" : " schedule-td--subject"}`}>
+                    {row.ages8to12}
+                  </td>
+                  <td className={`schedule-td${isBreakCell(row.ages13to16) ? " schedule-td--break" : " schedule-td--subject"}`}>
+                    {row.ages13to16}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
       {/* ── CAMP LOCATION ── */}
       <section className="curriculum-section location-section" id="location">
         <div className="section-label">Camp Location</div>
@@ -675,7 +704,6 @@ function App() {
             </button>
           </article>
 
-          {/* ── SPECIALTY CLASSES CARD ── */}
           <article className="program-card program-card--alt">
             <span className="tag">Online</span>
             <h2>Specialty Classes</h2>
@@ -836,10 +864,7 @@ function App() {
                         {item.fullyBooked && (
                           <p className="fully-booked-notice">
                             Make enquiries for our next intake at{" "}
-                            <a
-                              href="mailto:ask@learningsprouts.school"
-                              onClick={(e) => e.stopPropagation()}
-                            >
+                            <a href="mailto:ask@learningsprouts.school" onClick={(e) => e.stopPropagation()}>
                               ask@learningsprouts.school
                             </a>
                           </p>

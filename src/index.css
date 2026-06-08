@@ -80,9 +80,7 @@ textarea {
   transition: color 0.2s ease;
 }
 
-.nav-brand:hover {
-  color: #e07d1a;
-}
+.nav-brand:hover { color: #e07d1a; }
 
 .nav-links {
   display: flex;
@@ -134,9 +132,7 @@ textarea {
   transition: background 0.15s ease;
 }
 
-.nav-hamburger:hover {
-  background: rgba(23, 32, 51, 0.06);
-}
+.nav-hamburger:hover { background: rgba(23, 32, 51, 0.06); }
 
 .nav-mobile-menu {
   display: flex;
@@ -157,9 +153,7 @@ textarea {
   transition: background 0.15s ease;
 }
 
-.nav-mobile-menu a:hover {
-  background: rgba(23, 32, 51, 0.05);
-}
+.nav-mobile-menu a:hover { background: rgba(23, 32, 51, 0.05); }
 
 .nav-cta--mobile {
   background: #172033 !important;
@@ -170,9 +164,7 @@ textarea {
   border-radius: 12px !important;
 }
 
-.nav-cta--mobile:hover {
-  background: #f28c28 !important;
-}
+.nav-cta--mobile:hover { background: #f28c28 !important; }
 
 /* ─────────────────────────────────────────
    HERO
@@ -194,16 +186,9 @@ textarea {
   font-size: 0.95rem;
 }
 
-.hero-body {
-  width: 100%;
-}
+.hero-body { width: 100%; }
 
-h1,
-h2,
-h3,
-p {
-  margin-top: 0;
-}
+h1, h2, h3, p { margin-top: 0; }
 
 .hero-headline {
   font-size: clamp(2.8rem, 8vw, 5rem);
@@ -370,15 +355,8 @@ p {
   border-radius: 999px;
 }
 
-.skills-badge.hard {
-  background: #e8f4fd;
-  color: #1a6fa8;
-}
-
-.skills-badge.soft {
-  background: #fdecea;
-  color: #a8341a;
-}
+.skills-badge.hard { background: #e8f4fd; color: #1a6fa8; }
+.skills-badge.soft { background: #fdecea; color: #a8341a; }
 
 .skills-meta {
   color: #8a94a6;
@@ -390,7 +368,6 @@ p {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 20px;
-  /* Equal height cards in each row */
   align-items: stretch;
 }
 
@@ -410,7 +387,6 @@ p {
   box-shadow: 0 12px 32px rgba(23, 32, 51, 0.09);
 }
 
-/* Fully booked skill card — subtle greyed state */
 .skill-card--booked {
   opacity: 0.72;
   background: #f9f9f9;
@@ -448,6 +424,86 @@ p {
 }
 
 /* ─────────────────────────────────────────
+   DAILY SCHEDULE TABLE
+───────────────────────────────────────── */
+.schedule-section {
+  /* inherits .curriculum-section */
+}
+
+.schedule-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 20px;
+  box-shadow: 0 4px 24px rgba(23, 32, 51, 0.07);
+  border: 1px solid rgba(23, 32, 51, 0.08);
+}
+
+.schedule-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #ffffff;
+  border-radius: 20px;
+  overflow: hidden;
+  font-size: 0.95rem;
+}
+
+.schedule-th {
+  background: #172033;
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 16px 24px;
+  text-align: left;
+}
+
+.schedule-th--time {
+  width: 160px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.schedule-row:nth-child(even) {
+  background: #fffaf2;
+}
+
+.schedule-row:nth-child(odd) {
+  background: #ffffff;
+}
+
+.schedule-td {
+  padding: 14px 24px;
+  font-size: 0.92rem;
+  border-bottom: 1px solid rgba(23, 32, 51, 0.06);
+  vertical-align: middle;
+}
+
+.schedule-row:last-child .schedule-td {
+  border-bottom: none;
+}
+
+.schedule-td--time {
+  font-weight: 700;
+  color: #5c6678;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.schedule-td--subject {
+  font-weight: 700;
+  color: #c86f11;
+}
+
+.schedule-td--break {
+  font-weight: 600;
+  color: #8a94a6;
+  font-style: italic;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}
+
+/* ─────────────────────────────────────────
    REGISTER SECTION
 ───────────────────────────────────────── */
 .register-section {
@@ -480,9 +536,7 @@ p {
   box-shadow: 0 20px 50px rgba(23, 32, 51, 0.1);
 }
 
-.program-card--alt {
-  background: #fff4ea;
-}
+.program-card--alt { background: #fff4ea; }
 
 .program-card h2 {
   font-size: clamp(1.6rem, 2.5vw, 2.2rem);
@@ -557,7 +611,6 @@ p {
   font-size: 0.9rem !important;
 }
 
-/* Single pill that combines "Public Speaking Lab · Fully Booked" */
 .detail-pill-booked {
   display: inline-flex;
   align-items: center;
@@ -598,15 +651,11 @@ p {
   box-shadow: 0 14px 30px rgba(23, 32, 51, 0.2);
 }
 
-.card-button {
-  width: fit-content;
-}
+.card-button { width: fit-content; }
 
 /* ─────────────────────────────────────────
    FULLY BOOKED — badge & card states
 ───────────────────────────────────────── */
-
-/* Red pill badge — used in skill card titles and modal specialty card headers */
 .fully-booked-badge {
   display: inline-flex;
   align-items: center;
@@ -621,13 +670,11 @@ p {
   letter-spacing: 0.03em;
 }
 
-/* Extra spacing tweak when badge appears inside skill-title */
 .skill-booked-badge {
   font-size: 0.65rem;
   padding: 2px 9px;
 }
 
-/* Header row inside modal specialty cards */
 .specialty-card-header {
   display: flex;
   align-items: center;
@@ -636,13 +683,11 @@ p {
   margin-bottom: 6px;
 }
 
-/* specialty-card-header overrides the strong display:block from week-card rule */
 .specialty-card-header strong {
   display: inline;
   margin-bottom: 0;
 }
 
-/* Booked card in the modal — greyed out, dashed border, no hover lift */
 .specialty-card--booked {
   opacity: 0.72;
   background: #f9f9f9 !important;
@@ -655,7 +700,6 @@ p {
   transform: none !important;
 }
 
-/* Enquiry notice under booked modal card */
 .fully-booked-notice {
   margin-top: 8px;
   font-size: 0.78rem;
@@ -670,9 +714,7 @@ p {
   font-weight: 700;
 }
 
-.fully-booked-notice a:hover {
-  color: #96281b;
-}
+.fully-booked-notice a:hover { color: #96281b; }
 
 /* ─────────────────────────────────────────
    MODAL
@@ -686,10 +728,7 @@ p {
   padding: 48px 20px;
 }
 
-.registration-modal {
-  max-width: 1100px;
-  margin: 0 auto;
-}
+.registration-modal { max-width: 1100px; margin: 0 auto; }
 
 .registration-layout {
   display: grid;
@@ -707,9 +746,7 @@ p {
   box-shadow: 0 20px 60px rgba(23, 32, 51, 0.1);
 }
 
-.registration-form {
-  position: relative;
-}
+.registration-form { position: relative; }
 
 .modal-close {
   position: absolute;
@@ -747,10 +784,7 @@ p {
   gap: 16px;
 }
 
-.specialty-list {
-  display: grid;
-  gap: 12px;
-}
+.specialty-list { display: grid; gap: 12px; }
 
 label {
   display: grid;
@@ -785,9 +819,7 @@ textarea:focus {
   box-shadow: 0 0 0 3px rgba(242, 140, 40, 0.12);
 }
 
-.full-span {
-  grid-column: 1 / -1;
-}
+.full-span { grid-column: 1 / -1; }
 
 .form-section {
   margin-top: 28px;
@@ -815,9 +847,7 @@ textarea:focus {
 }
 
 .week-card:hover,
-.specialty-card:hover {
-  border-color: rgba(242, 140, 40, 0.4);
-}
+.specialty-card:hover { border-color: rgba(242, 140, 40, 0.4); }
 
 .week-card.selected,
 .specialty-card.selected {
@@ -841,14 +871,8 @@ textarea:focus {
   font-size: 0.82rem;
 }
 
-.week-meta span {
-  color: #5c6678;
-}
-
-.week-meta small {
-  color: #172033;
-  font-weight: 800;
-}
+.week-meta span { color: #5c6678; }
+.week-meta small { color: #172033; font-weight: 800; }
 
 .checkbox-row {
   display: flex;
@@ -860,14 +884,10 @@ textarea:focus {
   cursor: pointer;
 }
 
-.checkbox-row input {
-  width: auto;
-}
+.checkbox-row input { width: auto; }
 
 .sibling-fields,
-.session-select {
-  margin-top: 18px;
-}
+.session-select { margin-top: 18px; }
 
 .summary-line {
   display: flex;
@@ -895,9 +915,7 @@ textarea:focus {
   line-height: 1.5;
 }
 
-.full-button {
-  width: 100%;
-}
+.full-button { width: 100%; }
 
 .error-text {
   color: #c2410c;
@@ -909,9 +927,7 @@ textarea:focus {
 /* ─────────────────────────────────────────
    CAMP LOCATION / MAP
 ───────────────────────────────────────── */
-.location-section {
-  /* inherits .curriculum-section layout */
-}
+.location-section { /* inherits .curriculum-section layout */ }
 
 .map-wrapper {
   width: 100%;
@@ -922,10 +938,7 @@ textarea:focus {
   box-shadow: 0 4px 20px rgba(23, 32, 51, 0.06);
 }
 
-.map-caption {
-  margin: 12px 0 0;
-  text-align: right;
-}
+.map-caption { margin: 12px 0 0; text-align: right; }
 
 .map-link {
   color: #f28c28;
@@ -935,21 +948,13 @@ textarea:focus {
   transition: color 0.2s ease;
 }
 
-.map-link:hover {
-  color: #e07d1a;
-  text-decoration: underline;
-}
+.map-link:hover { color: #e07d1a; text-decoration: underline; }
 
 /* ─────────────────────────────────────────
    MOBILE
 ───────────────────────────────────────── */
 @media (max-width: 900px) {
-  html,
-  body,
-  #root {
-    min-height: auto;
-    height: auto;
-  }
+  html, body, #root { min-height: auto; height: auto; }
 
   body {
     background:
@@ -957,14 +962,9 @@ textarea:focus {
       linear-gradient(180deg, #fffaf2 0%, #fff7ea 100%);
   }
 
-  .page {
-    padding-bottom: 48px;
-    padding-top: 60px;
-  }
+  .page { padding-bottom: 48px; padding-top: 60px; }
 
-  .nav-links {
-    display: none;
-  }
+  .nav-links { display: none; }
 
   .nav-hamburger {
     display: flex;
@@ -972,101 +972,41 @@ textarea:focus {
     justify-content: center;
   }
 
-  .nav-inner {
-    height: 60px;
-    padding: 0 16px;
-  }
-
-  .nav-brand {
-    font-size: 0.72rem;
-  }
-
-  .hero {
-    padding: 40px 20px 40px;
-  }
-
-  .eyebrow {
-    margin-bottom: 24px;
-  }
-
-  .hero-headline {
-    font-size: clamp(2.4rem, 10vw, 3.5rem);
-  }
-
-  .hero-sub {
-    font-size: 0.92rem;
-  }
-
-  .trust-strip {
-    justify-content: center;
-  }
-
-  .trust-pill {
-    font-size: 0.82rem;
-    padding: 9px 14px;
-  }
+  .nav-inner { height: 60px; padding: 0 16px; }
+  .nav-brand { font-size: 0.72rem; }
+  .hero { padding: 40px 20px 40px; }
+  .eyebrow { margin-bottom: 24px; }
+  .hero-headline { font-size: clamp(2.4rem, 10vw, 3.5rem); }
+  .hero-sub { font-size: 0.92rem; }
+  .trust-strip { justify-content: center; }
+  .trust-pill { font-size: 0.82rem; padding: 9px 14px; }
 
   .curriculum-section,
-  .register-section {
-    padding: 48px 20px;
-  }
+  .register-section { padding: 48px 20px; }
 
-  .section-title {
-    font-size: clamp(1.7rem, 7vw, 2.2rem);
-  }
+  .section-title { font-size: clamp(1.7rem, 7vw, 2.2rem); }
 
-  .skills-grid {
-    grid-template-columns: 1fr;
-    gap: 14px;
-  }
+  .skills-grid { grid-template-columns: 1fr; gap: 14px; }
+  .skill-card { padding: 22px 18px; border-radius: 18px; }
 
-  .skill-card {
-    padding: 22px 18px;
-    border-radius: 18px;
-  }
-
-  .program-selection {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-
-  .program-card {
-    padding: 22px 18px;
-    border-radius: 22px;
-  }
-
-  .program-card h2 {
-    font-size: 1.5rem;
-    margin-bottom: 10px;
-  }
-
-  .card-button {
-    width: 100%;
-    margin-top: 16px;
-  }
+  .program-selection { grid-template-columns: 1fr; gap: 16px; }
+  .program-card { padding: 22px 18px; border-radius: 22px; }
+  .program-card h2 { font-size: 1.5rem; margin-bottom: 10px; }
+  .card-button { width: 100%; margin-top: 16px; }
 
   .registration-layout,
   .form-grid,
-  .week-grid {
-    grid-template-columns: 1fr;
-  }
+  .week-grid { grid-template-columns: 1fr; }
 
   .registration-form,
-  .payment-summary {
-    padding: 20px 16px;
-    border-radius: 20px;
-  }
+  .payment-summary { padding: 20px 16px; border-radius: 20px; }
 
-  .payment-summary {
-    position: static;
-  }
+  .payment-summary { position: static; }
+  .modal-backdrop { padding: 12px 10px; }
+  .modal-close { top: 14px; right: 14px; }
 
-  .modal-backdrop {
-    padding: 12px 10px;
-  }
-
-  .modal-close {
-    top: 14px;
-    right: 14px;
-  }
+  /* Schedule table on mobile */
+  .schedule-table-wrapper { border-radius: 14px; }
+  .schedule-th, .schedule-td { padding: 12px 14px; font-size: 0.82rem; }
+  .schedule-th--time { width: 110px; }
 }
