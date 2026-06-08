@@ -11,7 +11,7 @@ serve(async (req) => {
 
     const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 
-    // ── Email 1: Notification to Learning Sprouts team ──
+    // ── Email 1: Team notification ──
     const teamEmailBody = `
       <h2>New Paid Registration 🎉</h2>
       <table style="border-collapse: collapse; width: 100%;">
@@ -30,21 +30,19 @@ serve(async (req) => {
       </table>
     `;
 
-    // ── Email 2: Confirmation to parent ──
+    // ── Email 2: Parent confirmation ──
     const siblingSection = record.has_siblings && record.sibling_details
-      ? `<tr><td style="padding: 8px; border: 1px solid #eee; color: #5c6678;"><strong>Sibling Details</strong></td><td style="padding: 8px; border: 1px solid #eee; color: #5c6678;">${record.sibling_details}</td></tr>`
+      ? `<tr><td style="padding: 10px 20px; border-bottom: 1px solid #f0f0f0; font-weight: 700; color: #172033;">Sibling Details</td><td style="padding: 10px 20px; border-bottom: 1px solid #f0f0f0; color: #5c6678;">${record.sibling_details}</td></tr>`
       : "";
 
     const parentEmailBody = `
-      <div style="font-family: 'DM Sans', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff;">
 
-        <!-- Header -->
         <div style="background: #172033; padding: 32px 40px; border-radius: 16px 16px 0 0; text-align: center;">
           <p style="color: #f28c28; font-weight: 900; text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.75rem; margin: 0 0 8px;">Learning Sprouts Lagos</p>
-          <h1 style="color: #ffffff; font-size: 1.6rem; font-weight: 900; margin: 0; letter-spacing: -0.03em;">Registration Confirmed! 🎉</h1>
+          <h1 style="color: #ffffff; font-size: 1.6rem; font-weight: 900; margin: 0; letter-spacing: -0.03em;">You're registered! 🎉</h1>
         </div>
 
-        <!-- Body -->
         <div style="padding: 36px 40px; background: #fffaf2;">
 
           <p style="color: #172033; font-size: 1rem; line-height: 1.7; margin: 0 0 20px;">
@@ -52,10 +50,9 @@ serve(async (req) => {
           </p>
 
           <p style="color: #5c6678; font-size: 1rem; line-height: 1.7; margin: 0 0 28px;">
-            Thank you for registering for the <strong>Learning Sprouts Lagos Holiday Camp</strong>. We have received your payment and your child's spot is confirmed. We look forward to welcoming ${record.student_name} to camp!
+            Thank you for registering for the <strong>Learning Sprouts Lagos Holiday Camp</strong>. Your payment has been received and ${record.student_name}'s spot is confirmed. We look forward to an amazing camp experience!
           </p>
 
-          <!-- Registration Details -->
           <div style="background: #ffffff; border-radius: 14px; border: 1px solid rgba(23,32,51,0.08); overflow: hidden; margin-bottom: 28px;">
             <div style="background: #f28c28; padding: 12px 20px;">
               <p style="color: #ffffff; font-weight: 800; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; margin: 0;">Registration Details</p>
@@ -71,28 +68,21 @@ serve(async (req) => {
             </table>
           </div>
 
-          <!-- What's Next -->
-          <div style="background: #fff0d9; border-left: 4px solid #f28c28; border-radius: 0 10px 10px 0; padding: 16px 20px; margin-bottom: 28px;">
-            <p style="color: #172033; font-weight: 800; font-size: 0.9rem; margin: 0 0 6px;">What happens next?</p>
-            <p style="color: #5c6678; font-size: 0.9rem; line-height: 1.6; margin: 0;">Our team will be in touch with further details about the camp schedule, what to bring, and any other information you need before the first day.</p>
-          </div>
-
-          <!-- Contact -->
-          <div style="background: #ffffff; border-radius: 14px; border: 1px solid rgba(23,32,51,0.08); padding: 20px; text-align: center; margin-bottom: 28px;">
-            <p style="color: #172033; font-weight: 800; font-size: 0.9rem; margin: 0 0 8px;">Have a question? We're here to help.</p>
-            <p style="color: #5c6678; font-size: 0.88rem; margin: 0 0 12px;">Reach us on WhatsApp for the fastest response:</p>
+          <div style="background: #ffffff; border-radius: 14px; border: 1px solid rgba(23,32,51,0.08); padding: 24px; text-align: center; margin-bottom: 28px;">
+            <p style="color: #172033; font-weight: 800; font-size: 0.95rem; margin: 0 0 8px;">Have any questions?</p>
+            <p style="color: #5c6678; font-size: 0.88rem; line-height: 1.6; margin: 0 0 16px;">Feel free to reach out to us on WhatsApp — we're happy to help!</p>
             <a href="https://wa.me/254719218992" style="display: inline-block; background: #25D366; color: #ffffff; font-weight: 800; font-size: 0.9rem; padding: 12px 24px; border-radius: 999px; text-decoration: none;">
-              📱 WhatsApp: +254 719 218 992
+              📱 WhatsApp Us: +254 719 218 992
             </a>
-            <p style="color: #8a94a6; font-size: 0.82rem; margin: 12px 0 0;">Or email us at <a href="mailto:ask@learningsprouts.school" style="color: #f28c28;">ask@learningsprouts.school</a></p>
+            <p style="color: #8a94a6; font-size: 0.82rem; margin: 12px 0 0;">Or email us at <a href="mailto:ask@learningsprouts.school" style="color: #f28c28; text-decoration: none;">ask@learningsprouts.school</a></p>
           </div>
 
           <p style="color: #5c6678; font-size: 0.9rem; line-height: 1.7; margin: 0; text-align: center;">
             We can't wait to see ${record.student_name} at camp! 🚀
           </p>
+
         </div>
 
-        <!-- Footer -->
         <div style="background: #172033; padding: 24px 40px; border-radius: 0 0 16px 16px; text-align: center;">
           <p style="color: rgba(255,255,255,0.5); font-size: 0.78rem; margin: 0;">© ${new Date().getFullYear()} Learning Sprouts. All rights reserved.</p>
         </div>
@@ -100,14 +90,10 @@ serve(async (req) => {
       </div>
     `;
 
-    // ── Send both emails ──
     const [teamRes, parentRes] = await Promise.all([
       fetch("https://api.resend.com/emails", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${RESEND_API_KEY}`,
-        },
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${RESEND_API_KEY}` },
         body: JSON.stringify({
           from: "Learning Sprouts Lagos <notifications@learningsprouts.school>",
           to: ["ask@learningsprouts.school"],
@@ -117,14 +103,11 @@ serve(async (req) => {
       }),
       fetch("https://api.resend.com/emails", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${RESEND_API_KEY}`,
-        },
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${RESEND_API_KEY}` },
         body: JSON.stringify({
           from: "Learning Sprouts Lagos <notifications@learningsprouts.school>",
           to: [record.parent_email],
-          subject: `Registration Confirmed — ${record.student_name} · Learning Sprouts Lagos`,
+          subject: `You're registered! — Learning Sprouts Lagos Holiday Camp`,
           html: parentEmailBody,
         }),
       }),
