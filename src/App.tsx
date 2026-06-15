@@ -47,6 +47,7 @@ type SpecialtyClass = {
     id: string;
     label: string;
     time: string;
+    fullyBooked?: boolean;
   }[];
 };
 
@@ -100,7 +101,7 @@ const specialtyClasses: SpecialtyClass[] = [
     ageLabel: "Ages 13+",
     priceUsd: 90,
     options: [
-      { id: "kpop-july-13", label: "Week of July 13", time: "1:30 PM – 2:30 PM WAT" },
+      { id: "kpop-july-13", label: "Week of July 13", time: "1:30 PM – 2:30 PM WAT", fullyBooked: true },
       { id: "kpop-july-20", label: "Week of July 20", time: "1:30 PM – 2:30 PM WAT" },
     ],
   },
@@ -879,7 +880,13 @@ function App() {
                       <select value={selectedSpecialtyOption} onChange={(e) => setSelectedSpecialtyOption(e.target.value)}>
                         <option value="">Select an option</option>
                         {selectedClass.options.map((option) => (
-                          <option key={option.id} value={option.id}>{option.label} · {option.time}</option>
+                          <option
+                            key={option.id}
+                            value={option.id}
+                            disabled={option.fullyBooked}
+                          >
+                            {option.label} · {option.time}{option.fullyBooked ? " · Fully Booked" : ""}
+                          </option>
                         ))}
                       </select>
                       {errors.selectedSpecialtyOption && <span className="error-text">{errors.selectedSpecialtyOption}</span>}
