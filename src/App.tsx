@@ -76,24 +76,23 @@ const initialFormData: FormData = {
 };
 
 const summerWeeks = [
-  { id: "week-1", label: "Week 1", dates: "July 6 – July 10", priceUsd: 100 },
-  { id: "week-2", label: "Week 2", dates: "July 13 – July 17", priceUsd: 100 },
-  { id: "week-3", label: "Week 3", dates: "July 20 – July 24", priceUsd: 100 },
-  { id: "week-4", label: "Week 4", dates: "July 27 – July 31", priceUsd: 100 },
-  { id: "week-5", label: "Week 5", dates: "August 3 – August 7", priceUsd: 100 },
-  { id: "week-6", label: "Week 6", dates: "August 10 – August 14", priceUsd: 100 },
+  { id: "week-1", label: "Week 1", dates: "July 6 – July 10",    priceUsd: 100 },
+  { id: "week-2", label: "Week 2", dates: "July 13 – July 17",   priceUsd: 100 },
+  { id: "week-3", label: "Week 3", dates: "July 20 – July 24",   priceUsd: 100 },
+  { id: "week-4", label: "Week 4", dates: "July 27 – July 31",   priceUsd: 100 },
+  { id: "week-5", label: "Week 5", dates: "August 3 – August 7", priceUsd: 100, interestOnly: true },
+  { id: "week-6", label: "Week 6", dates: "August 10 – August 14", priceUsd: 100, interestOnly: true },
 ];
 
 const scheduleRows = [
-  { time: "9:00 – 10:00",   ages8to12: "Math",        ages13to16: "AI/Coding",    isBreak: false },
-  { time: "10:00 – 10:30",  ages8to12: "Fun Sciences", ages13to16: "AI/Coding",    isBreak: false },
-  { time: "10:30 – 11:00",  ages8to12: "Fun Sciences", ages13to16: "Break",        isBreak: false },
-  { time: "11:00 – 11:30",  ages8to12: "Break",        ages13to16: "Math",         isBreak: false },
-  { time: "11:30 – 12:00",  ages8to12: "AI/Coding",   ages13to16: "Math",         isBreak: false },
-  { time: "12:00 – 1:00",   ages8to12: "AI/Coding",   ages13to16: "Fun Sciences", isBreak: false },
+  { time: "9:00 – 10:00",  ages8to12: "Math",        ages13to16: "AI/Coding",    isBreak: false },
+  { time: "10:00 – 10:30", ages8to12: "Fun Sciences", ages13to16: "AI/Coding",    isBreak: false },
+  { time: "10:30 – 11:00", ages8to12: "Fun Sciences", ages13to16: "Break",        isBreak: false },
+  { time: "11:00 – 11:30", ages8to12: "Break",        ages13to16: "Math",         isBreak: false },
+  { time: "11:30 – 12:00", ages8to12: "AI/Coding",   ages13to16: "Math",         isBreak: false },
+  { time: "12:00 – 1:00",  ages8to12: "AI/Coding",   ages13to16: "Fun Sciences", isBreak: false },
 ];
 
-// Public Speaking Lab last, marked fullyBooked
 const specialtyClasses: SpecialtyClass[] = [
   {
     id: "kpop-songwriting",
@@ -157,7 +156,6 @@ const hardSkills = [
   },
 ];
 
-// Public Speaking Lab marked fullyBooked so the card shows the badge
 const softSkills: SoftSkill[] = [
   {
     icon: "🎤",
@@ -228,9 +226,13 @@ function App() {
       ? 1 + Number(formData.siblingCount || 0)
       : 1;
 
+  // Only count weeks that are NOT interestOnly toward the payment total
   const totalUsd = useMemo(() => {
     if (programType === "summer-camp") {
-      return selectedWeeks.length * SUMMER_WEEK_PRICE_USD * childCount;
+      const payableWeeks = selectedWeeks.filter(
+        (id) => !summerWeeks.find((w) => w.id === id)?.interestOnly
+      );
+      return payableWeeks.length * SUMMER_WEEK_PRICE_USD * childCount;
     }
     return selectedSpecialtyClass && selectedSpecialtyOption ? SPECIALTY_PRICE_USD : 0;
   }, [programType, selectedWeeks, selectedSpecialtyClass, selectedSpecialtyOption, childCount]);
@@ -254,6 +256,9 @@ function App() {
   }
 
   function toggleWeek(weekId: string) {
+    // Interest-only weeks are not togglable for payment — they use a mailto link
+    const week = summerWeeks.find((w) => w.id === weekId);
+    if (week?.interestOnly) return;
     setSelectedWeeks((current) =>
       current.includes(weekId) ? current.filter((id) => id !== weekId) : [...current, weekId]
     );
@@ -298,7 +303,6 @@ function App() {
     return Object.keys(nextErrors).length === 0;
   }
 
-  // ─── STEP 1: Save registration as "pending" BEFORE opening Paystack ───
   async function createPendingRegistration(reference: string, amountInUsdCents: number): Promise<string> {
     const { data: programData, error: programError } = await supabase
       .from("programs")
@@ -383,7 +387,6 @@ function App() {
     return registration.id;
   }
 
-  // ─── STEP 2a: Update registration to "paid" AFTER successful payment ───
   async function markRegistrationPaid(registrationId: string, reference: string, _amountInUsdCents: number) {
     const { error: updateError } = await supabase
       .from("registrations")
@@ -404,7 +407,6 @@ function App() {
     if (paymentError) throw paymentError;
   }
 
-  // ─── STEP 2b: Update registration to "cancelled" if Paystack is closed ───
   async function markRegistrationCancelled(registrationId: string) {
     await supabase
       .from("registrations")
@@ -429,7 +431,6 @@ function App() {
     const amountInUsdCents = Math.round(totalUsd * 100);
     const selectedSummerWeeks = summerWeeks.filter((week) => selectedWeeks.includes(week.id));
 
-    // ── Save to DB BEFORE opening Paystack ──
     let registrationId: string;
     try {
       registrationId = await createPendingRegistration(reference, amountInUsdCents);
@@ -799,15 +800,38 @@ function App() {
                   <h3>Select Holiday Camp weeks</h3>
                   {errors.selectedWeeks && <p className="error-text">{errors.selectedWeeks}</p>}
                   <div className="week-grid">
-                    {summerWeeks.map((week) => (
-                      <button key={week.id} type="button" className={`week-card ${selectedWeeks.includes(week.id) ? "selected" : ""}`} onClick={() => toggleWeek(week.id)}>
-                        <strong>{week.label}</strong>
-                        <div className="week-meta">
-                          <span>{week.dates}</span>
-                          <small>{formatCurrency(week.priceUsd, "USD")}</small>
+                    {summerWeeks.map((week) =>
+                      week.interestOnly ? (
+                        /* ── Interest-only card (Weeks 5 & 6) ── */
+                        <div key={week.id} className="week-card week-card--interest">
+                          <strong>{week.label}</strong>
+                          <div className="week-meta">
+                            <span>{week.dates}</span>
+                          </div>
+                          <span className="interest-badge">Register to Show Interest</span>
+                          <p className="interest-notice">
+                            Make enquiries at{" "}
+                            <a href="mailto:ask@learningsprouts.school">
+                              ask@learningsprouts.school
+                            </a>
+                          </p>
                         </div>
-                      </button>
-                    ))}
+                      ) : (
+                        /* ── Normal selectable week card ── */
+                        <button
+                          key={week.id}
+                          type="button"
+                          className={`week-card${selectedWeeks.includes(week.id) ? " selected" : ""}`}
+                          onClick={() => toggleWeek(week.id)}
+                        >
+                          <strong>{week.label}</strong>
+                          <div className="week-meta">
+                            <span>{week.dates}</span>
+                            <small>{formatCurrency(week.priceUsd, "USD")}</small>
+                          </div>
+                        </button>
+                      )
+                    )}
                   </div>
 
                   <label className="checkbox-row">

@@ -717,6 +717,55 @@ h1, h2, h3, p { margin-top: 0; }
 .fully-booked-notice a:hover { color: #96281b; }
 
 /* ─────────────────────────────────────────
+   REGISTER TO SHOW INTEREST — week cards
+───────────────────────────────────────── */
+.week-card--interest {
+  border: 1px dashed #d4aa70 !important;
+  background: #fdf8f0 !important;
+  cursor: default !important;
+  opacity: 0.88;
+  /* Override button hover styles from .week-card */
+  pointer-events: auto;
+}
+
+.week-card--interest:hover {
+  border-color: #d4aa70 !important;
+  box-shadow: none !important;
+}
+
+/* Yellow "Register to Show Interest" badge */
+.interest-badge {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  background: #fff3cd;
+  color: #7d5a00;
+  border: 1px solid #e6c84a;
+}
+
+/* Notice text + email link below the badge */
+.interest-notice {
+  margin: 6px 0 0;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #8a6a00;
+  line-height: 1.5;
+}
+
+.interest-notice a {
+  color: #8a6a00;
+  text-decoration: underline;
+  font-weight: 700;
+}
+
+.interest-notice a:hover { color: #5c4600; }
+
+/* ─────────────────────────────────────────
    MODAL
 ───────────────────────────────────────── */
 .modal-backdrop {
