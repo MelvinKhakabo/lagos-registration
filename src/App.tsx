@@ -88,7 +88,7 @@ const initialFormData: FormData = {
 const summerWeeks: { id: string; label: string; dates: string; priceUsd: number; status: WeekStatus }[] = [
   { id: "week-1", label: "Week 1", dates: "July 6 – July 10",    priceUsd: 100, status: "closed" },
   { id: "week-2", label: "Week 2", dates: "July 13 – July 17",   priceUsd: 100, status: "closed" },
-  { id: "week-3", label: "Week 3", dates: "July 20 – July 24",   priceUsd: 100, status: "open" },
+  { id: "week-3", label: "Week 3", dates: "July 20 – July 24",   priceUsd: 100, status: "booked" },
   { id: "week-4", label: "Week 4", dates: "July 27 – July 31",   priceUsd: 100, status: "booked" },
   { id: "week-5", label: "Week 5", dates: "August 3 – August 7", priceUsd: 100, status: "booked" },
   { id: "week-6", label: "Week 6", dates: "August 10 – August 14", priceUsd: 100, status: "booked" },
@@ -1019,3 +1019,4 @@ function App() {
 }
 
 export default App;
+
