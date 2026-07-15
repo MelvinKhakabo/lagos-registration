@@ -43,6 +43,7 @@ type SpecialtyClass = {
   ageLabel: string;
   priceUsd: number;
   fullyBooked?: boolean;
+  closeDate?: Date;
   options: {
     id: string;
     label: string;
@@ -58,9 +59,17 @@ type SoftSkill = {
   descriptionJsx: React.ReactNode;
 };
 
+// ── Week status types ──────────────────────────────────────────────────────
+// "open"   — selectable, shows price
+// "closed" — registration closed (weeks 1 & 2), not selectable
+// "booked" — fully booked (weeks 3–6), not selectable
+type WeekStatus = "open" | "closed" | "booked";
+// ────────────────────────────────────────────────────────────────────────────
+
 const SUMMER_WEEK_PRICE_USD = 100;
 const SPECIALTY_PRICE_USD = 90;
 const PAYSTACK_PUBLIC_KEY = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY;
+const ENQUIRY_EMAIL = "ask@learningsprouts.school";
 
 const initialFormData: FormData = {
   studentName: "",
@@ -75,14 +84,16 @@ const initialFormData: FormData = {
   siblingDetails: "",
 };
 
-const summerWeeks = [
-  { id: "week-1", label: "Week 1", dates: "July 6 – July 10",    priceUsd: 100 },
-  { id: "week-2", label: "Week 2", dates: "July 13 – July 17",   priceUsd: 100 },
-  { id: "week-3", label: "Week 3", dates: "July 20 – July 24",   priceUsd: 100 },
-  { id: "week-4", label: "Week 4", dates: "July 27 – July 31",   priceUsd: 100 },
-  { id: "week-5", label: "Week 5", dates: "August 3 – August 7", priceUsd: 100, interestOnly: true },
-  { id: "week-6", label: "Week 6", dates: "August 10 – August 14", priceUsd: 100, interestOnly: true },
+// ── Summer weeks — status field controls display and selectability ─────────
+const summerWeeks: { id: string; label: string; dates: string; priceUsd: number; status: WeekStatus }[] = [
+  { id: "week-1", label: "Week 1", dates: "July 6 – July 10",    priceUsd: 100, status: "closed" },
+  { id: "week-2", label: "Week 2", dates: "July 13 – July 17",   priceUsd: 100, status: "closed" },
+  { id: "week-3", label: "Week 3", dates: "July 20 – July 24",   priceUsd: 100, status: "booked" },
+  { id: "week-4", label: "Week 4", dates: "July 27 – July 31",   priceUsd: 100, status: "booked" },
+  { id: "week-5", label: "Week 5", dates: "August 3 – August 7", priceUsd: 100, status: "booked" },
+  { id: "week-6", label: "Week 6", dates: "August 10 – August 14", priceUsd: 100, status: "booked" },
 ];
+// ────────────────────────────────────────────────────────────────────────────
 
 const scheduleRows = [
   { time: "9:00 – 10:00",  ages8to12: "Math",        ages13to16: "AI/Coding",    isBreak: false },
@@ -93,12 +104,14 @@ const scheduleRows = [
   { time: "12:00 – 1:00",  ages8to12: "AI/Coding",   ages13to16: "Fun Sciences", isBreak: false },
 ];
 
+// ── Specialty classes — closeDate triggers automatic registration closure ──
 const specialtyClasses: SpecialtyClass[] = [
   {
     id: "kpop-songwriting",
     name: "K-pop Songwriting",
     ageLabel: "Ages 13+",
     priceUsd: 90,
+    closeDate: new Date("2026-07-20T00:00:00"), // closes midnight July 20
     options: [
       { id: "kpop-july-13", label: "Week of July 13", time: "1:30 PM – 2:30 PM WAT", fullyBooked: true },
       { id: "kpop-july-20", label: "Week of July 20", time: "1:30 PM – 2:30 PM WAT" },
@@ -109,6 +122,7 @@ const specialtyClasses: SpecialtyClass[] = [
     name: "Music Production (Afrobeats)",
     ageLabel: "Ages 13+",
     priceUsd: 90,
+    closeDate: new Date("2026-07-27T00:00:00"), // closes midnight July 27
     options: [
       { id: "afrobeats-july-27", label: "Week of July 27", time: "9:00 AM – 10:30 AM WAT" },
     ],
@@ -125,6 +139,7 @@ const specialtyClasses: SpecialtyClass[] = [
     ],
   },
 ];
+// ────────────────────────────────────────────────────────────────────────────
 
 const hardSkills = [
   {
@@ -199,6 +214,12 @@ function isBreakCell(value: string) {
   return value.toLowerCase() === "break";
 }
 
+// Returns true if a specialty class's closeDate has passed
+function isSpecialtyClassClosed(cls: SpecialtyClass): boolean {
+  if (cls.closeDate && new Date() >= cls.closeDate) return true;
+  return false;
+}
+
 function App() {
   const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
   const [programType, setProgramType] = useState<ProgramType>("summer-camp");
@@ -226,11 +247,11 @@ function App() {
       ? 1 + Number(formData.siblingCount || 0)
       : 1;
 
-  // Only count weeks that are NOT interestOnly toward the payment total
+  // Only count weeks that are "open" toward the payment total
   const totalUsd = useMemo(() => {
     if (programType === "summer-camp") {
       const payableWeeks = selectedWeeks.filter(
-        (id) => !summerWeeks.find((w) => w.id === id)?.interestOnly
+        (id) => summerWeeks.find((w) => w.id === id)?.status === "open"
       );
       return payableWeeks.length * SUMMER_WEEK_PRICE_USD * childCount;
     }
@@ -256,9 +277,8 @@ function App() {
   }
 
   function toggleWeek(weekId: string) {
-    // Interest-only weeks are not togglable for payment — they use a mailto link
     const week = summerWeeks.find((w) => w.id === weekId);
-    if (week?.interestOnly) return;
+    if (!week || week.status !== "open") return;
     setSelectedWeeks((current) =>
       current.includes(weekId) ? current.filter((id) => id !== weekId) : [...current, weekId]
     );
@@ -675,7 +695,7 @@ function App() {
         <div className="section-label">Enroll now</div>
         <h2 className="section-title">Register for the Program of Your Choice</h2>
         <p className="section-sub">
-          For ages 8–12 and ages 13–16. Select the program that fits your child's interests. You can register for the Holiday Camp, Specialty Classes, or both.
+          For ages 8–12 and ages 13–16. Select the program that fits your child's interests.
         </p>
 
         <div className="program-selection">
@@ -795,29 +815,49 @@ function App() {
                 </label>
               </div>
 
+              {/* ── SUMMER CAMP WEEK SELECTION ── */}
               {programType === "summer-camp" && (
                 <div className="form-section">
                   <h3>Select Holiday Camp weeks</h3>
                   {errors.selectedWeeks && <p className="error-text">{errors.selectedWeeks}</p>}
                   <div className="week-grid">
-                    {summerWeeks.map((week) =>
-                      week.interestOnly ? (
-                        /* ── Interest-only card (Weeks 5 & 6) ── */
-                        <div key={week.id} className="week-card week-card--interest">
-                          <strong>{week.label}</strong>
-                          <div className="week-meta">
-                            <span>{week.dates}</span>
+                    {summerWeeks.map((week) => {
+                      if (week.status === "closed") {
+                        // Weeks 1 & 2 — Registration Closed
+                        return (
+                          <div key={week.id} className="week-card week-card--closed">
+                            <strong>{week.label}</strong>
+                            <div className="week-meta">
+                              <span>{week.dates}</span>
+                            </div>
+                            <span className="closed-badge">Registration Closed</span>
+                            <p className="closed-notice">
+                              Make enquiries for next summer at{" "}
+                              <a href={`mailto:${ENQUIRY_EMAIL}`}>{ENQUIRY_EMAIL}</a>
+                            </p>
                           </div>
-                          <span className="interest-badge">Register to Show Interest</span>
-                          <p className="interest-notice">
-                            Make enquiries at{" "}
-                            <a href="mailto:ask@learningsprouts.school">
-                              ask@learningsprouts.school
-                            </a>
-                          </p>
-                        </div>
-                      ) : (
-                        /* ── Normal selectable week card ── */
+                        );
+                      }
+
+                      if (week.status === "booked") {
+                        // Weeks 3–6 — Fully Booked
+                        return (
+                          <div key={week.id} className="week-card week-card--booked">
+                            <strong>{week.label}</strong>
+                            <div className="week-meta">
+                              <span>{week.dates}</span>
+                            </div>
+                            <span className="fully-booked-badge">Fully Booked</span>
+                            <p className="fully-booked-notice">
+                              Make enquiries for next summer at{" "}
+                              <a href={`mailto:${ENQUIRY_EMAIL}`}>{ENQUIRY_EMAIL}</a>
+                            </p>
+                          </div>
+                        );
+                      }
+
+                      // Open week — selectable
+                      return (
                         <button
                           key={week.id}
                           type="button"
@@ -830,8 +870,8 @@ function App() {
                             <small>{formatCurrency(week.priceUsd, "USD")}</small>
                           </div>
                         </button>
-                      )
-                    )}
+                      );
+                    })}
                   </div>
 
                   <label className="checkbox-row">
@@ -856,49 +896,67 @@ function App() {
                 </div>
               )}
 
+              {/* ── SPECIALTY CLASS SELECTION ── */}
               {programType === "specialty-classes" && (
                 <div className="form-section">
                   <h3>Select Specialty Class</h3>
                   {errors.selectedSpecialtyClass && <p className="error-text">{errors.selectedSpecialtyClass}</p>}
                   <div className="specialty-list">
-                    {specialtyClasses.map((item) => (
-                      <div
-                        key={item.id}
-                        className={`specialty-card${item.fullyBooked ? " specialty-card--booked" : ""}${selectedSpecialtyClass === item.id ? " selected" : ""}`}
-                        onClick={() => {
-                          if (!item.fullyBooked) {
-                            setSelectedSpecialtyClass(item.id);
-                            setSelectedSpecialtyOption("");
-                            setErrors((c) => ({ ...c, selectedSpecialtyClass: "" }));
-                          }
-                        }}
-                        style={{ cursor: item.fullyBooked ? "not-allowed" : "pointer" }}
-                      >
-                        <div className="specialty-card-header">
-                          <strong>{item.name}</strong>
-                          {item.fullyBooked && (
-                            <span className="fully-booked-badge">Fully Booked</span>
+                    {specialtyClasses.map((item) => {
+                      const isClosed = isSpecialtyClassClosed(item);
+                      const isBooked = item.fullyBooked;
+                      const isUnavailable = isClosed || isBooked;
+
+                      return (
+                        <div
+                          key={item.id}
+                          className={`specialty-card${isUnavailable ? " specialty-card--booked" : ""}${selectedSpecialtyClass === item.id ? " selected" : ""}`}
+                          onClick={() => {
+                            if (!isUnavailable) {
+                              setSelectedSpecialtyClass(item.id);
+                              setSelectedSpecialtyOption("");
+                              setErrors((c) => ({ ...c, selectedSpecialtyClass: "" }));
+                            }
+                          }}
+                          style={{ cursor: isUnavailable ? "not-allowed" : "pointer" }}
+                        >
+                          <div className="specialty-card-header">
+                            <strong>{item.name}</strong>
+                            {isBooked && !isClosed && (
+                              <span className="fully-booked-badge">Fully Booked</span>
+                            )}
+                            {isClosed && (
+                              <span className="closed-badge">Registration Closed</span>
+                            )}
+                          </div>
+                          <div className="week-meta">
+                            <span>{item.ageLabel}</span>
+                            {!isUnavailable && (
+                              <small>{formatCurrency(item.priceUsd, "USD")}</small>
+                            )}
+                          </div>
+                          {isBooked && !isClosed && (
+                            <p className="fully-booked-notice">
+                              Make enquiries for our next intake at{" "}
+                              <a href={`mailto:${ENQUIRY_EMAIL}`} onClick={(e) => e.stopPropagation()}>
+                                {ENQUIRY_EMAIL}
+                              </a>
+                            </p>
+                          )}
+                          {isClosed && (
+                            <p className="closed-notice">
+                              Make enquiries for next summer at{" "}
+                              <a href={`mailto:${ENQUIRY_EMAIL}`} onClick={(e) => e.stopPropagation()}>
+                                {ENQUIRY_EMAIL}
+                              </a>
+                            </p>
                           )}
                         </div>
-                        <div className="week-meta">
-                          <span>{item.ageLabel}</span>
-                          {!item.fullyBooked && (
-                            <small>{formatCurrency(item.priceUsd, "USD")}</small>
-                          )}
-                        </div>
-                        {item.fullyBooked && (
-                          <p className="fully-booked-notice">
-                            Make enquiries for our next intake at{" "}
-                            <a href="mailto:ask@learningsprouts.school" onClick={(e) => e.stopPropagation()}>
-                              ask@learningsprouts.school
-                            </a>
-                          </p>
-                        )}
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
 
-                  {selectedClass && (
+                  {selectedClass && !isSpecialtyClassClosed(selectedClass) && (
                     <label className="session-select">
                       Choose Week/Session
                       <select value={selectedSpecialtyOption} onChange={(e) => setSelectedSpecialtyOption(e.target.value)}>
